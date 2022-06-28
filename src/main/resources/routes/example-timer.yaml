@@ -1,0 +1,34 @@
+# camel-k: dependency=mvn:org.apache.camel:camel-snakeyaml:3.17.0
+- beans:
+    - name: uniqueId
+      type: org.apache.camel.support.DefaultUuidGenerator
+- route:
+    from:
+      uri: timer:periodic
+      steps:
+        - to:
+            uri: https://randomuser.me/api/?inc=name,email,location,login
+        - unmarshal:
+            json:
+              library: Gson
+        - transform:
+            expression:
+              jsonpath:
+                expression: $.results[0]
+        - transform:
+            expression:
+              simple:
+                expression: >-
+                  ${bean:uniqueId.generateUuid} ${body.get('name').get('first')}
+                  ${body.get('name').get('last')}
+        - to:
+            uri: vertx:names?pubSub=true
+      parameters:
+        delay: '0'
+        period: '250'
+- route:
+    from:
+      uri: vertx:names
+      steps:
+        - to:
+            uri: stream:out
