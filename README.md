@@ -1,8 +1,7 @@
 # supersonic-subatomic-camel Project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+This project uses [Apache Camel](https://camel.apache.org/) running on top of [Quarkus](https://quarkus.io/) to
+demonstrate creating cloud-native, scalable, enterprise integration patterns quickly and effectively.
 
 ## Running the application in dev mode
 
