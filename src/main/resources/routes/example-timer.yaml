@@ -1,7 +1,4 @@
 # camel-k: dependency=mvn:org.apache.camel:camel-snakeyaml:3.17.0
-- beans:
-    - name: uniqueId
-      type: org.apache.camel.support.DefaultUuidGenerator
 - route:
     from:
       uri: timer:periodic
@@ -19,8 +16,8 @@
             expression:
               simple:
                 expression: >-
-                  ${bean:uniqueId.generateUuid} ${body.get('name').get('first')}
-                  ${body.get('name').get('last')}
+                  {{quarkus.uuid}} ${body.get('name').get('last')},
+                  ${body.get('name').get('first')}
         - to:
             uri: vertx:names?pubSub=true
       parameters:
