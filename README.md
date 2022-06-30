@@ -1,7 +1,21 @@
-# supersonic-subatomic-camel Project
+# Supersonic Subatomic Integration with Apache Camel and Quarkus
 
 This project uses [Apache Camel](https://camel.apache.org/) running on top of [Quarkus](https://quarkus.io/) to
 demonstrate creating cloud-native, scalable, enterprise integration patterns quickly and effectively.
+
+## Running The Twitter Example
+
+Twitter requires a developer account and API tokens/keys to access their Search API. In order for this example to work you will need to
+populate a `.env` file wherever you run the application from which looks like this:
+
+```
+TWITTER_ACCESS_TOKEN=<REDACTED>
+TWITTER_ACCESS_SECRET=<REDACTED>
+TWITTER_API_KEY=<REDACTED>
+TWITTER_API_SECRET=<REDACTED>
+```
+
+You can get these values by signing up for a developer account at https://developer.twitter.com/
 
 ## Running the application in dev mode
 
