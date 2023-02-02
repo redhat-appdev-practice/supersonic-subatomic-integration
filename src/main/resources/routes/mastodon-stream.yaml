@@ -1,0 +1,55 @@
+apiVersion: camel.apache.org/v1
+kind: Integration
+metadata:
+  name: mastodon-stream.yaml
+spec:
+  flows:
+    - route:
+        from:
+          uri: vertx:public.source
+          steps:
+            - to:
+                uri: stream:out
+    - route:
+        from:
+          uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public
+          steps:
+            - split:
+                expression:
+                  tokenize:
+                    token: '"\n"'
+            - filter:
+                expression:
+                  simple:
+                    expression: '${body} startsWith "data: {"'
+            - transform:
+                expression:
+                  simple:
+                    expression: '${body.replaceAll("^data: *", "")}'
+                    resultType: java.lang.String
+            - setHeader:
+                name: content
+                expression:
+                  jsonpath:
+                    expression: $.content
+            - setHeader:
+                name: created
+                expression:
+                  jsonpath:
+                    expression: $.created_at
+            - setHeader:
+                name: account
+                expression:
+                  jsonpath:
+                    expression: $.account.acct
+            - setBody:
+                expression:
+                  simple:
+                    expression: |-
+                      {
+                          "account": "${header.account}",
+                          "content": "${header.content}",
+                          "created": "${header.created}"
+                      }
+            - to:
+                uri: vertx:public.source
