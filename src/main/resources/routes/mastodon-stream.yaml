@@ -14,19 +14,23 @@ spec:
         from:
           uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public
           steps:
+            # Split SEE stream on newline characters
             - split:
                 expression:
                   tokenize:
                     token: '"\n"'
+            # Filter out lines which do not start with JSON Data
             - filter:
                 expression:
                   simple:
                     expression: '${body} startsWith "data: {"'
+            # Strip the leading "data: " from the SSE event
             - transform:
                 expression:
                   simple:
                     expression: '${body.replaceAll("^data: *", "")}'
                     resultType: java.lang.String
+            # Extract the fields we care about into headers using JSONPath
             - setHeader:
                 name: content
                 expression:
@@ -42,6 +46,7 @@ spec:
                 expression:
                   jsonpath:
                     expression: $.account.acct
+            # Create a JSON document from the extracted fields
             - setBody:
                 expression:
                   simple:
@@ -51,5 +56,6 @@ spec:
                           "content": "${header.content}",
                           "created": "${header.created}"
                       }
+            # Send the JSON Body via the Vert.x event bus
             - to:
                 uri: vertx:public.source
