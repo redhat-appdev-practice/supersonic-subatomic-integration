@@ -65,25 +65,33 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
-      <artifactId>camel-quarkus-twitter</artifactId>
+      <artifactId>camel-quarkus-rss</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
-      <artifactId>camel-quarkus-gson</artifactId>
+      <artifactId>camel-quarkus-bean</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-jsonb</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-timer</artifactId>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-http</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-stream</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-snakeyaml</artifactId>
+    </dependency>
+    <!-- <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-jsonpath</artifactId>
     </dependency>
@@ -93,16 +101,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
-      <artifactId>camel-quarkus-snakeyaml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-smallrye-reactive-messaging</artifactId>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-infinispan</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
