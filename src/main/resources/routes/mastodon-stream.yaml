@@ -35,7 +35,7 @@ spec:
             - filter:
                 expression:
                   jsonpath:
-                    expression: $.language == "en"
+                    expression: $[?(@.language == "en")]
                 description: Filter for only English posts
             - unmarshal:
                 json:
