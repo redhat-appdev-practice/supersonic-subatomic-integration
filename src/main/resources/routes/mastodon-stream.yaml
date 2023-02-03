@@ -37,6 +37,10 @@ spec:
                   library: gson
                   unmarshalType: java.util.Map
                 description: Deserialize the JSON data into a Java Map
+            - filter:
+                expression:
+                  simple:
+                    expression: ${body.get("language").toLowerCase()} == "en"
             - setBody:
                 expression:
                   simple:
@@ -46,7 +50,9 @@ spec:
                           "content": "${in.body.get("content")}",
                           "created": "${in.body.get("created_at")}"
                       }
-                description: Using the extracted data, create a JSON body with the desired fields
+                description: >-
+                  Using the extracted data, create a JSON body with the desired
+                  fields
             - to:
                 uri: vertx:public.source
                 description: Send the JSON body via Vert.x event bus
