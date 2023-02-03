@@ -25,22 +25,23 @@ spec:
                 expression:
                   simple:
                     expression: '${body} startsWith "data: {"'
-                description: 'Filter for items which start with ''data: {'''
+                description: Filter for data elements
             - transform:
                 expression:
                   simple:
                     expression: '${body.replaceAll("^data: *", "")}'
                     resultType: java.lang.String
-                description: 'Strip off the leading ''data: '' to expose the raw JSON'
+                description: Extract JSON data
+            - filter:
+                expression:
+                  jsonpath:
+                    expression: $.language == "en"
+                description: Filter for only English posts
             - unmarshal:
                 json:
                   library: gson
                   unmarshalType: java.util.Map
                 description: Deserialize the JSON data into a Java Map
-            - filter:
-                expression:
-                  simple:
-                    expression: ${body.get("language").toLowerCase()} == "en"
             - setBody:
                 expression:
                   simple:
@@ -56,3 +57,4 @@ spec:
             - to:
                 uri: vertx:public.source
                 description: Send the JSON body via Vert.x event bus
+          description: Get Mastodon events via SSE
