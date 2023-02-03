@@ -10,52 +10,43 @@ spec:
           steps:
             - to:
                 uri: stream:out
+                description: Send JSON body to stdout
+          description: Consume JSON data from the Vert.x event bus
     - route:
         from:
           uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public
           steps:
-            # Split SEE stream on newline characters
             - split:
                 expression:
                   tokenize:
                     token: '"\n"'
-            # Filter out lines which do not start with JSON Data
+                description: Split SSE data by newlines
             - filter:
                 expression:
                   simple:
                     expression: '${body} startsWith "data: {"'
-            # Strip the leading "data: " from the SSE event
+                description: 'Filter for items which start with ''data: {'''
             - transform:
                 expression:
                   simple:
                     expression: '${body.replaceAll("^data: *", "")}'
                     resultType: java.lang.String
-            # Extract the fields we care about into headers using JSONPath
-            - setHeader:
-                name: content
-                expression:
-                  jsonpath:
-                    expression: $.content
-            - setHeader:
-                name: created
-                expression:
-                  jsonpath:
-                    expression: $.created_at
-            - setHeader:
-                name: account
-                expression:
-                  jsonpath:
-                    expression: $.account.acct
-            # Create a JSON document from the extracted fields
+                description: 'Strip off the leading ''data: '' to expose the raw JSON'
+            - unmarshal:
+                json:
+                  library: gson
+                  unmarshalType: java.util.Map
+                description: Deserialize the JSON data into a Java Map
             - setBody:
                 expression:
                   simple:
                     expression: |-
                       {
-                          "account": "${header.account}",
-                          "content": "${header.content}",
-                          "created": "${header.created}"
+                          "account": "${in.body.get("account").get("acct")}",
+                          "content": "${in.body.get("content")}",
+                          "created": "${in.body.get("created_at")}"
                       }
-            # Send the JSON Body via the Vert.x event bus
+                description: Using the extracted data, create a JSON body with the desired fields
             - to:
                 uri: vertx:public.source
+                description: Send the JSON body via Vert.x event bus
