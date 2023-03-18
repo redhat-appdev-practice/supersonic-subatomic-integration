@@ -1,0 +1,20 @@
+[
+    {
+      "name" : "java.lang.String",
+      "allDeclaredConstructors" : true,
+      "allPublicConstructors" : true,
+      "allDeclaredMethods" : true,
+      "allPublicMethods" : true,
+      "allDeclaredFields" : true,
+      "allPublicFields" : true
+    },
+    {
+      "name" : "com.google.gson.internal.LinkedTreeMap",
+      "allDeclaredConstructors" : true,
+      "allPublicConstructors" : true,
+      "allDeclaredMethods" : true,
+      "allPublicMethods" : true,
+      "allDeclaredFields" : true,
+      "allPublicFields" : true
+    }
+  ]

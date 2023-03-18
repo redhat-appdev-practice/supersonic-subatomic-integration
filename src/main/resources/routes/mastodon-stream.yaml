@@ -5,14 +5,22 @@ metadata:
 spec:
   flows:
     - route:
+<<<<<<< HEAD
         id: route-bc34
         from:
           uri: vertx:public.source
           id: from-fa3c
+=======
+        id: route-92c0
+        from:
+          uri: vertx:public.source
+          id: from-59f2
+>>>>>>> origin/main
           description: Consume JSON data from the Vert.x event bus
           steps:
             - to:
                 uri: stream:out
+<<<<<<< HEAD
                 id: to-679c
                 description: Send JSON body to stdout
     - route:
@@ -55,11 +63,60 @@ spec:
                 id: unmarshal-dbe5
                 json:
                   id: json-ae49
+=======
+                id: to-0e07
+                description: Send JSON body to stdout
+        description: Consume The Events
+    - route:
+        id: route-5852
+        from:
+          uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public
+          id: from-7c84
+          description: Get Mastodon events via SSE
+          steps:
+            - split:
+                id: split-7f4b
+                expression:
+                  tokenize:
+                    token: '"\n"'
+                    id: tokenize-dfc5
+                description: Split SSE data by newlines
+            - filter:
+                id: filter-bdf5
+                expression:
+                  simple:
+                    expression: '${body} startsWith "data: {"'
+                    id: simple-e9f5
+                description: Filter for data elements
+            - transform:
+                id: transform-826d
+                expression:
+                  simple:
+                    expression: '${body.replaceAll("^data: *", "")}'
+                    id: simple-3d65
+                    resultType: java.lang.String
+                description: Extract JSON data
+            - filter:
+                id: filter-a3d8
+                expression:
+                  jsonpath:
+                    expression: $[?(@.language == "en")]
+                    id: jsonpath-9bd5
+                description: Filter for only English posts
+            - unmarshal:
+                id: unmarshal-418a
+                json:
+                  id: json-097f
+>>>>>>> origin/main
                   library: gson
                   unmarshalType: java.util.Map
                 description: Deserialize the JSON data into a Java Map
             - setBody:
+<<<<<<< HEAD
                 id: setBody-387a
+=======
+                id: setBody-c210
+>>>>>>> origin/main
                 expression:
                   simple:
                     expression: |-
@@ -68,11 +125,21 @@ spec:
                           "content": "${in.body.get("content")}",
                           "created": "${in.body.get("created_at")}"
                       }
+<<<<<<< HEAD
                     id: simple-4abe
+=======
+                    id: simple-d662
+>>>>>>> origin/main
                 description: >-
                   Using the extracted data, create a JSON body with the desired
                   fields
             - to:
                 uri: vertx:public.source
+<<<<<<< HEAD
                 id: to-f873
                 description: Send the JSON body via Vert.x event bus
+=======
+                id: to-5418
+                description: Send the JSON body via Vert.x event bus
+        description: Produce Events From Mastodon
+>>>>>>> origin/main

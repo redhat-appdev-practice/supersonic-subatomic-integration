@@ -3,19 +3,10 @@
 This project uses [Apache Camel](https://camel.apache.org/) running on top of [Quarkus](https://quarkus.io/) to
 demonstrate creating cloud-native, scalable, enterprise integration patterns quickly and effectively.
 
-## Running The Twitter Example
+## Running The Mastodon Example
 
-Twitter requires a developer account and API tokens/keys to access their Search API. In order for this example to work you will need to
-populate a `.env` file wherever you run the application from which looks like this:
-
-```
-TWITTER_ACCESS_TOKEN=<REDACTED>
-TWITTER_ACCESS_SECRET=<REDACTED>
-TWITTER_API_KEY=<REDACTED>
-TWITTER_API_SECRET=<REDACTED>
-```
-
-You can get these values by signing up for a developer account at https://developer.twitter.com/
+The public feed from any given Mastodon instance is accessible without authentication. You will only need to authenticate
+with a Mastodon instance if you wish to write something to the API (e.g. Toot, Re-toot, Star, etc...)
 
 ## Running the application in dev mode
 
@@ -64,11 +55,8 @@ If you want to learn more about building native executables, please consult http
 
 - Camel Vert.x ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/vertx.html)): Send and receive messages to/from Vert.x Event Bus
 - Camel Core ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/core.html)): Camel core functionality and basic Camel languages: Constant, ExchangeProperty, Header, Ref, Simple and Tokenize
-- Camel Vert.x WebSocket ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/vertx-websocket.html)): Camel WebSocket support with Vert.x
-- Camel JPA ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/jpa.html)): Store and retrieve Java objects from databases using Java Persistence API (JPA)
 - Camel Direct ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/direct.html)): Call another endpoint from the same Camel Context synchronously
 - Camel JSON-B ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/jsonb.html)): Marshal POJOs to JSON and back using JSON-B
 - Camel SmallRye Reactive Messaging ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/smallrye-reactive-messaging.html)): Camel integration with SmallRye Reactive Messaging
-- Blaze-Persistence ([guide](https://quarkus.io/guides/blaze-persistence)): Advanced SQL support for JPA and Entity-Views as efficient DTOs
-- Reactive PostgreSQL client ([guide](https://quarkus.io/guides/reactive-sql-clients)): Connect to the PostgreSQL database using the reactive pattern
-- Reactive Routes ([guide](https://quarkus.io/guides/reactive-routes)): REST framework offering the route model to define non blocking endpoints
+- Camel Stream ([guide](https://camel.apache.org/camel-quarkus/2.16.x/reference/extensions/stream.html)): Read and write from local or remote HTTP streams
+- Camel GSon ([guide](https://camel.apache.org/camel-quarkus/2.16.x/reference/extensions/gson.html)): Marshal to and Unmarshal from JSON using Google's GSon library
