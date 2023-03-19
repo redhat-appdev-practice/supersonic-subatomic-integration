@@ -22,10 +22,10 @@
             "      id: from-fa3c",
             "      description: Consume JSON data from the Vert.x event bus",
             "      steps:",
-            "      - to:",
+            "        - to:",
             "          uri: stream:out",
             "          id: to-679c",
-            "            description: Send JSON body to stdout"
+            "          description: Send JSON body to stdout"
         ]
     },
     "foojay": {
@@ -79,7 +79,7 @@
             "        expression: '${body.replaceAll(\\\"^data: *\\\", \\\"\\\")}'",
             "        id: simple-9041",
             "        resultType: java.lang.String",
-            "    description: Extract JSON data"
+            "    description: Remove data prefix from SSE content"
         ]
     },
     "language": {
