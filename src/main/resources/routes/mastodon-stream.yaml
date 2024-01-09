@@ -6,75 +6,85 @@ spec:
   flows:
     - route:
         id: route-92c0
+        description: Consume The Events
         from:
-          uri: vertx:public.source
           id: from-59f2
           description: Consume JSON data from the Vert.x event bus
+          uri: vertx
+          parameters:
+            address: public.source
           steps:
             - to:
-                uri: stream:out
                 id: to-0e07
                 description: Send JSON body to stdout
-        description: Consume The Events
+                uri: stream
+                parameters:
+                  kind: out
     - route:
         id: route-5852
+        description: Produce Events From Mastodon
         from:
-          uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public
           id: from-7c84
           description: Get Mastodon events via SSE
+          uri: stream
+          parameters:
+            kind: http
+            httpHeaders: Authorization=Bearer 3KrtEW464T1vTL37yZeBGplbqDixkVsav_EwoF0qXXg
+            httpUrl: https://foojay.social/api/v1/streaming/public
+            scanStream: true
           steps:
             - split:
                 id: split-7f4b
+                description: Split SSE data by newlines
                 expression:
                   tokenize:
-                    token: '"\n"'
                     id: tokenize-dfc5
-                description: Split SSE data by newlines
+                    token: '"\n"'
             - filter:
                 id: filter-bdf5
+                description: Filter for data elements
                 expression:
                   simple:
-                    expression: '${body} startsWith "data: {"'
                     id: simple-e9f5
-                description: Filter for data elements
+                    expression: '${body} startsWith "data: {"'
             - transform:
                 id: transform-826d
+                description: Extract JSON data
                 expression:
                   simple:
-                    expression: '${body.replaceAll("^data: *", "")}'
                     id: simple-3d65
+                    expression: '${body.replaceAll("^data: *", "")}'
                     resultType: java.lang.String
-                description: Extract JSON data
             - filter:
                 id: filter-a3d8
+                description: Filter for only English posts
                 expression:
                   jsonpath:
-                    expression: $[?(@.language == "en")]
                     id: jsonpath-9bd5
-                description: Filter for only English posts
+                    expression: $[?(@.language == "en")]
             - unmarshal:
                 id: unmarshal-418a
+                description: Deserialize the JSON data into a Java Map
                 json:
                   id: json-097f
                   library: gson
                   unmarshalType: java.util.Map
-                description: Deserialize the JSON data into a Java Map
             - setBody:
                 id: setBody-c210
-                expression:
-                  simple:
-                    expression: |-
-                      {
-                          "account": "${in.body.get("account").get("acct")}",
-                          "content": "${in.body.get("content")}",
-                          "created": "${in.body.get("created_at")}"
-                      }
-                    id: simple-d662
                 description: >-
                   Using the extracted data, create a JSON body with the desired
                   fields
+                expression:
+                  simple:
+                    id: simple-d662
+                    expression: >-
+                      {"account":
+                      "${in.body.get("account").get("acct")}","content":
+                      "${in.body.get("content")}","created":
+                      "${in.body.get("created_at")}"}
             - to:
-                uri: vertx:public.source
                 id: to-5418
                 description: Send the JSON body via Vert.x event bus
-        description: Produce Events From Mastodon
+                uri: vertx
+                parameters:
+                  address: public.source

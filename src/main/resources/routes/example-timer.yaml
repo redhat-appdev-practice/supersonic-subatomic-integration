@@ -1,31 +1,48 @@
-# camel-k: dependency=mvn:org.apache.camel:camel-snakeyaml:3.17.0
 - route:
+    id: route-6c8d
     from:
       uri: timer:periodic
+      id: from-5c92
+      parameters:
+        delay: '0'
+        period: '250'
       steps:
         - to:
             uri: https://randomuser.me/api/?inc=name,email,location,login
+            id: to-5fe5
         - unmarshal:
+            id: unmarshal-b1e3
             json:
+              id: json-8421
               library: Gson
         - transform:
+            id: transform-35e6
             expression:
               jsonpath:
                 expression: $.results[0]
+                id: jsonpath-242f
         - transform:
+            id: transform-678b
             expression:
               simple:
                 expression: >-
                   {{quarkus.uuid}} ${body.get('name').get('last')},
                   ${body.get('name').get('first')}
+                id: simple-8642
         - to:
             uri: vertx:names?pubSub=true
-      parameters:
-        delay: '0'
-        period: '250'
+            id: to-d049
 - route:
+    id: route-f607
     from:
       uri: vertx:names
+      id: from-9291
       steps:
         - to:
             uri: stream:out
+            id: to-0d26
+- route:
+    id: route-ccca
+    from:
+      uri: activemq
+      id: from-bf62
