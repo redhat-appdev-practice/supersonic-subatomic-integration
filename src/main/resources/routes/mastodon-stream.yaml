@@ -5,16 +5,59 @@ metadata:
 spec:
   flows:
     - route:
-        id: route-92c0
-        description: Consume The Events
+        id: route-bc34
         from:
-          id: from-59f2
+          uri: vertx:public.source
+          id: from-fa3c
           description: Consume JSON data from the Vert.x event bus
           uri: vertx
           parameters:
             address: public.source
           steps:
             - to:
+                uri: stream:out
+                id: to-679c
+                description: Send JSON body to stdout
+    - route:
+        id: route-9e58
+        from:
+          uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public
+          id: from-7165
+          description: Get Mastodon events via SSE
+          steps:
+            - split:
+                id: split-3253
+                expression:
+                  tokenize:
+                    token: '"\n"'
+                    id: tokenize-5997
+                description: Split SSE data by newlines
+            - filter:
+                id: filter-6596
+                expression:
+                  simple:
+                    expression: '${body} startsWith "data: {"'
+                    id: simple-20f9
+                description: Filter for data elements
+            - transform:
+                id: transform-3753
+                expression:
+                  simple:
+                    expression: '${body.replaceAll("^data: *", "")}'
+                    id: simple-9041
+                    resultType: java.lang.String
+                description: Extract JSON data
+            - filter:
+                id: filter-3891
+                expression:
+                  jsonpath:
+                    expression: $[?(@.language == "en")]
+                    id: jsonpath-6734
+                description: Filter for only English posts
+            - unmarshal:
+                id: unmarshal-dbe5
+                json:
+                  id: json-ae49
                 id: to-0e07
                 description: Send JSON body to stdout
                 uri: stream
@@ -88,3 +131,5 @@ spec:
                 uri: vertx
                 parameters:
                   address: public.source
+                id: to-f873
+                description: Send the JSON body via Vert.x event bus

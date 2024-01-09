@@ -1,0 +1,141 @@
+{
+    "camelk": {
+        "scope": "yaml",
+        "prefix": "camelk",
+        "body": [
+            "apiVersion: camel.apache.org/v1",
+            "kind: Integration",
+            "metadata:",
+            "  name: mastodon-stream.yaml",
+            "spec:",
+            "  flows:"
+        ]
+    },
+    "vxstdout": {
+        "scope": "yaml",
+        "prefix": "vxstdout",
+        "body": [
+            "- route:",
+            "    id: route-bc34",
+            "    from:",
+            "      uri: vertx:public.source",
+            "      id: from-fa3c",
+            "      description: Consume JSON data from the Vert.x event bus",
+            "      steps:",
+            "        - to:",
+            "          uri: stream:out",
+            "          id: to-679c",
+            "          description: Send JSON body to stdout"
+        ]
+    },
+    "foojay": {
+        "scope": "yaml",
+        "prefix": "foojay",
+        "body": [
+            "- route:",
+            "  id: route-9e58",
+            "  from:",
+            "    uri: stream:http?httpUrl=https://foojay.social/api/v1/streaming/public",
+            "    id: from-7165",
+            "    description: Get Mastodon events via SSE"
+        ]
+    },
+    "split": {
+        "scope": "yaml",
+        "prefix": "split",
+        "body": [
+            "steps:",
+            "- split:",
+            "    id: split-3253",
+            "    expression:",
+            "      tokenize:",
+            "        token: '\\\"\\n\\\"'",
+            "        id: tokenize-5997",
+            "    description: Split SSE data by newlines"
+        ]
+    },
+
+    "filter": {
+        "scope": "yaml",
+        "prefix": "filter",
+        "body": [
+            "- filter:",
+            "    id: filter-6596",
+            "    expression:",
+            "      simple:",
+            "        expression: '\\${body} startsWith \\\"data: {\\\"'",
+            "        id: simple-20f9",
+            "    description: Filter for data elements"
+        ]
+    },
+    "replace": {
+        "scope": "yaml",
+        "prefix": "replace",
+        "body": [
+            "- transform:",
+            "    id: transform-3753",
+            "    expression:",
+            "      simple:",
+            "        expression: '${body.replaceAll(\\\"^data: *\\\", \\\"\\\")}'",
+            "        id: simple-9041",
+            "        resultType: java.lang.String",
+            "    description: Remove data prefix from SSE content"
+        ]
+    },
+    "language": {
+        "scope": "yaml",
+        "prefix": "language",
+        "body": [
+            "- filter:",
+            "    id: filter-3891",
+            "    expression:",
+            "      jsonpath:",
+            "        expression: $[?(@.language == \"${1:en}\")]",
+            "        id: jsonpath-6734",
+            "    description: Filter for only English posts"
+        ]
+    },
+    "parse": {
+        "scope": "yaml",
+        "prefix": "parse",
+        "body": [
+            "- unmarshal:",
+            "    id: unmarshal-dbe5",
+            "    json:",
+            "      id: json-ae49",
+            "      library: gson",
+            "      unmarshalType: java.util.Map",
+            "    description: Deserialize the JSON data into a Java Map"
+        ]
+    },
+    "content": {
+        "scope": "yaml",
+        "prefix": "content",
+        "body": [
+            "- setBody:",
+            "    id: setBody-387a",
+            "    expression:",
+            "      simple:",
+            "        expression: |-",
+            "          {",
+            "              \\\"account\\\": \\\"${in.body.get(\\\"account\\\").get(\\\"acct\\\")}\\\",",
+            "              \\\"content\\\": \\\"${in.body.get(\\\"content\\\")}\\\",",
+            "              \\\"created\\\": \\\"${in.body.get(\\\"created_at\\\")}\\\"",
+            "          }",
+            "        id: simple-4abe",
+            "    description: >-",
+            "      Using the extracted data, create a JSON body with the desired",
+            "      fields"
+        ]
+    },
+    "send": {
+        "scope": "yaml",
+        "prefix": "send",
+        "body": [
+            "- to:",
+            "    uri: vertx:public.source",
+            "    id: to-f873",
+            "    description: Send the JSON body via Vert.x event bus"
+        ]
+    }
+}
